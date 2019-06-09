@@ -79,7 +79,10 @@ abstract class Tower {
     public boolean withinRange() {
         return true;
     }
-
+    
+    /*
+     * Turns to face its target balloon
+     */
     public void update(Sprite target) {
         if (target != null) {
             double distanceX = target.getX() + 10 - this.getX();
@@ -90,8 +93,9 @@ abstract class Tower {
         }
 
     }
-
-    //find a target that is within the attack range
+    /*
+     * find a target that is within the attack range
+     */
     public void findTarget(ArrayList<Balloon> sprites) {
         double closestDist = 0.0;
         Balloon closestTarget = null;

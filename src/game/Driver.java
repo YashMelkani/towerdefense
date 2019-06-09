@@ -12,31 +12,30 @@ import java.util.Iterator;
 
 public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
 
-	int towerType = 0;
-	int numBalloons = 10;
+	int towerType = 0; //tower selected
+	int numBalloons = 10; // number of balloons
 	int screen_width = 1500;
 	int screen_height = 1000;
-	String selected = "";
+	String selected = ""; // selected tower
 
-	ArrayList<Balloon> bs = new ArrayList<Balloon>();
-	ArrayList<Blimp> bigBS = new ArrayList<Blimp>();
-	double[] rarity = {0, 0, 0, 0, 0};
-	double start;
+	ArrayList<Balloon> bs = new ArrayList<Balloon>(); //balloons on field
+	double[] rarity = {0, 0, 0, 0, 0}; // probabilities for each balloon
+	double start; // start time
 	Background bg;
-	int level = 1;
+	int level = 1; // the level
 	Sprite cursorTracker = new Sprite("../resources/Dart_Monkey.png", 1500, 100);
 
-	int pHealth = 100; // example
-	int WaveNumber = 0;
-	int Money = 300; // example
+	int pHealth = 100; // health
+	int WaveNumber = 0; // wave number
+	int Money = 300; // money for buying
 
 	private Sprite dartTowerSelector;
 	private Sprite tackShooterSelector;
 	private Sprite superMonkeySelector;
 	private Sprite sniperMonkeySelector;
-	private static ArrayList<Tower> towers = new ArrayList<>();
-	private static ArrayList<Balloon> attackedBalloons = new ArrayList<>();
-	public static ArrayList<GameEffect> gameEffects = new ArrayList<>();
+	private static ArrayList<Tower> towers = new ArrayList<>(); // towers on field
+	private static ArrayList<Balloon> attackedBalloons = new ArrayList<>(); //balloons being targeted
+	public static ArrayList<GameEffect> gameEffects = new ArrayList<>(); // darts and tacks
 
 	private boolean placingTower;
 	private boolean pressed = false;
@@ -68,12 +67,12 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		g.drawString("Wave: " + WaveNumber, 1100, 50);
 		g.drawString(selected, 1000, 950);
 		g.setFont(font2);
-		g.setColor(Color.BLACK);
+		g.setColor(Color.BLACK); // paints money
 		g.drawString("$100", 1350, 150);
 		g.drawString("$500", 1350, 250);
 		g.drawString("$2000", 1350, 350);
 		g.drawString("$150", 1350, 450);
-		if(pHealth <= 0) {
+		if(pHealth <= 0) { // if player loses
 			g.setFont(font3);
 			g.drawString("Game Over", 1050, 600);
 			g.setFont(font4);
@@ -118,14 +117,14 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 			
 		}
 		else {
-			if (placingTower) {
+			if (placingTower) { // when the player is placing a tower
 				cursorTracker.setx(mouseX - 20);
 				cursorTracker.sety(mouseY - 75);
 			} else {
 				cursorTracker.setx(5000);
 			}
 			placeTower();
-			for (Tower t : towers) {
+			for (Tower t : towers) { // updates Balloon targets for towere
 				if (t.getCost() >= 2000 && t.getCooldown() <= 0) {
 					t.setCooldown(10);
 					t.findTarget(bs);
@@ -149,7 +148,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 				}
 			}
 			
-			Iterator<GameEffect> iter = gameEffects.iterator();
+			Iterator<GameEffect> iter = gameEffects.iterator(); // updates game effects
 			while (iter.hasNext()) {
 				GameEffect effect = iter.next();
 				effect.move(bs);
@@ -160,14 +159,14 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		
 			for (int i = 0; i < bs.size(); i++) {
 				Balloon b;
-				if (bs.get(i).getClass() == Balloon.class) {
+				if (bs.get(i).getClass() == Balloon.class) {// checks if a balloon died
 					b = bs.get(i);
 					if (!b.isAlive()) {
 						bs.remove(b);
 						attackedBalloons.remove(b);
 						Money += 2;
 					}
-				} else {
+				} else { // checks if a blimp (or white balloon) died
 					b = (Blimp) bs.get(i);
 					if (!b.isAlive()) {
 						newBalloon((Blimp) b);
@@ -178,7 +177,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 		
 				}
 				b.move();
-				if (b.isFinished()) {
+				if (b.isFinished()) { // checks if anything made it to the end
 					int damage = b.getDamage();
 					bs.remove(i);
 					i--;
@@ -186,7 +185,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 				}
 			}
 		
-			if (bs.size() == 0) {
+			if (bs.size() == 0) { // sends in a new wave
 				level++;
 				newLevel(level);
 				Money += 150 - pHealth;
@@ -291,7 +290,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	}
 	
 
-	private void placeTower() {
+	private void placeTower() { // handles placing towers logic
 		if (pressed && mouseX > 1195 && mouseX < 1300 && mouseY > 125 && mouseY < 225) {
 			placingTower = true;
 			towerType = 1;
@@ -379,7 +378,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener, Mouse
 	@Override
 	public void keyPressed(KeyEvent e) {
 		
-		if (e.getKeyCode() == 32) {
+		if (e.getKeyCode() == 32 && pHealth <= 0) { // resets game if necessary
 			pHealth = 100;
 			attackedBalloons = new ArrayList<Balloon>();
 			bs = new ArrayList<Balloon>();

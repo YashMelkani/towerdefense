@@ -3,7 +3,7 @@ package game;
 import java.util.ArrayList;
 
 public class Blimp extends Balloon{
-		
+	
 	public Blimp(int tier, int x, int y) {
 		super(tier, x, y);
 		this.setTier(tier);
